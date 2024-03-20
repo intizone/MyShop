@@ -2,11 +2,9 @@ from main import models
 from . import serializers
 from .serializers import *
 from django.contrib.auth import authenticate
-from django.db.models import Q
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.contrib.auth.models import AnonymousUser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -22,8 +20,8 @@ def category_list(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def category_detail(request, slug):
     category = Category.objects.get(slug=slug)
     category_serializer = CategorySerializer(category)
@@ -33,8 +31,8 @@ def category_detail(request, slug):
     return Response(context)
 
 @api_view(['POST'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def category_create(request):
     serializer = CategorySerializer(data=request.data)
     if serializer.is_valid():
@@ -43,8 +41,8 @@ def category_create(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def category_update(request, slug):
     try:
         category = Category.objects.get(slug=slug)
@@ -58,8 +56,8 @@ def category_update(request, slug):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def category_delete(request, slug):
     try:
         category = Category.objects.get(slug=slug)
@@ -73,13 +71,13 @@ def category_delete(request, slug):
 
 @api_view(['GET'])
 def product_list(request):
-    products = Product.objects.filter(quantity__gt=0)  # Only include products with quantity > 0
+    products = Product.objects.filter(quantity__gt=0)
     serializer = ProductSerializerImage(products, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def product_create(request):
     serializer = ProductSerializer(data=request.data)
     if serializer.is_valid():
@@ -89,8 +87,8 @@ def product_create(request):
 
 
 @api_view(['PUT'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def product_update(request, slug):
     try:
         product = Product.objects.get(slug=slug)
@@ -104,8 +102,8 @@ def product_update(request, slug):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def product_delete(request, slug):
     try:
         product = Product.objects.get(slug=slug)
@@ -118,8 +116,8 @@ def product_delete(request, slug):
 # PRODUCT IMAGE VIEWS FUNCTIONS
 
 @api_view(['POST'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def product_image_create(request):
     serializer = ProductImageSerializer(data=request.data)
     if serializer.is_valid():
@@ -129,8 +127,8 @@ def product_image_create(request):
 
 
 @api_view(['PUT'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def product_image_update(request, slug):
     try:
         product_image = ProductImage.objects.get(slug=slug)
@@ -145,8 +143,8 @@ def product_image_update(request, slug):
 
 
 @api_view(['DELETE'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def product_image_delete(request, slug):
     try:
         product_image = ProductImage.objects.get(slug=slug)
@@ -158,8 +156,8 @@ def product_image_delete(request, slug):
 
 
 @api_view(['POST'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def add_review(request):
     serializer = ProductReviewSerializer(data=request.data)
     if serializer.is_valid():
@@ -169,9 +167,11 @@ def add_review(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# CART VIEWS FUNCTIONS
+
 @api_view(["GET"])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def cart_list(request):
     active = Cart.objects.filter(is_active=True, user=request.user)
     in_active = Cart.objects.filter(is_active=False, user=request.user).order_by('-id')
@@ -183,8 +183,8 @@ def cart_list(request):
 
 
 @api_view(['POST'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def cart_create(request):
     serializer = CartSerializer(data=request.data)
     if serializer.is_valid():
@@ -194,8 +194,8 @@ def cart_create(request):
 
 
 @api_view(['PUT'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def cart_update(request, slug):
     try:
         cart = Cart.objects.get(slug=slug)
@@ -209,12 +209,11 @@ def cart_update(request, slug):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
+# CART PRODUCT VIEWS FUNCTIONS
 
 @api_view(["GET"])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def cart_product_list(request):
     cart_products = CartProduct.objects.all()
     serializer = CartProductSerializer(cart_products, many=True)
@@ -222,8 +221,8 @@ def cart_product_list(request):
 
 
 @api_view(['POST'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def cart_product_create(request):
     serializer = CartProductSerializer(data=request.data)
     if serializer.is_valid():
@@ -233,8 +232,8 @@ def cart_product_create(request):
 
 
 @api_view(['PUT'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def cart_product_update(request, slug):
     try:
         cart_product = CartProduct.objects.get(slug=slug)
@@ -249,8 +248,8 @@ def cart_product_update(request, slug):
 
 
 @api_view(['DELETE'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def cart_product_delete(request, slug):
     try:
         cart_product = CartProduct.objects.get(slug=slug)
@@ -260,9 +259,11 @@ def cart_product_delete(request, slug):
     return Response(status=status.HTTP_200_OK)
 
 
+"""savatchadagi maxsulotlarni sotib olish uchun rasmiylashtirish
+va yetkazib berish ma'lumotlarini saqlovchi funksiya"""
 @api_view(['POST'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def serve_order_create(request):
     serializer = ServeOrderSerializer(data=request.data)
     if serializer.is_valid():
@@ -270,7 +271,7 @@ def serve_order_create(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+# AUTH VIEWS FUNCTIONS
 @api_view(["POST"])
 def sign_in(request):
     username = request.data['username']
@@ -284,7 +285,6 @@ def sign_in(request):
     else:
         info = {'fatal':'user not found'}
     return Response(info)
-
 
 @api_view(['POST'])
 def sign_up(request):
@@ -308,11 +308,9 @@ def sign_up(request):
     else:
         return Response({'fatal':'check the password you wrote'})
 
-
-
 @api_view(['POST'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def sign_out(request):
     request.user.auth_token.delete()
     return Response({'success' : 'logged out'})
